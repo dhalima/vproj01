@@ -1,0 +1,63 @@
+<VirtualHost *:80>
+
+	DocumentRoot /vagrant_www/d6site/
+
+  ServerName drupal.local
+  ServerAlias www.drupal.local
+
+  RewriteEngine on
+
+  <Directory "/vagrant_www/d6site/">
+    Options FollowSymLinks
+    AllowOverride all
+    Order allow,deny
+    Allow from all
+
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ index.php?q= [L,QSA]
+  </Directory>
+
+</VirtualHost>
+
+<VirtualHost *:43>
+        ServerAdmin dlima@ciandt.com
+
+
+  ServerName drupal.local
+  ServerAlias www.drupal.local
+
+	SSLEngine on
+	
+	SSLCertificateFile    /etc/pki/tls/certs/ss_ca.crt
+	SSLCertificateKeyFile /etc/pki/tls/private/ss_ca.key
+
+        DocumentRoot /vagrant_www/d6site/
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride All
+        </Directory>
+        <Directory /vagrant_www/d6site>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride All
+                Order allow,deny
+                allow from all
+        </Directory>
+
+        ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+        <Directory "/usr/lib/cgi-bin">
+                AllowOverride None
+                Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+                Order allow,deny
+                Allow from all
+        </Directory>
+
+        ErrorLog /vagrant/apps/log/d6site_error.log
+
+        # Possible values include: debug, info, notice, warn, error, crit,
+        # alert, emerg.
+        LogLevel warn
+
+        CustomLog /vagrant/apps/log/d6site_access.log combined
+</VirtualHost>
